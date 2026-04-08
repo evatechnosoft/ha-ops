@@ -7,19 +7,22 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      - name: Docker Build & Push to Docker Hub
+      - name: Docker Build & Push
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker build -t evatechnosoft/ha-ops:latest .
-          docker push evatechnosoft/ha-ops:latest
+          docker build -t deancjx/ha-ops:latest .
+          docker push deancjx/ha-ops:latest
 
-      - name: Deploy to ZimaOS (Prod)
+      # HAZIRLIK: Bu adÄ±m sadece SSH secret'lar girildiÄŸinde Ã§alÄ±ÅŸÄ±r.
+      - name: Deploy to ZimaOS (Prod - Port 4610)
         uses: appleboy/ssh-action@v1.0.3
+        if: secrets.ZIMAOS_PASSWORD != ''
         with:
           host: ${{ secrets.ZIMAOS_IP }}
           username: dean
@@ -27,5 +30,5 @@ jobs:
           script: |
             sudo docker stop ha-ops-prod || true
             sudo docker rm ha-ops-prod || true
-            sudo docker pull evatechnosoft/ha-ops:latest
-            sudo docker run -d --name ha-ops-prod -p 4601:8123 -v /DATA/AppData/ha-ops/prod:/config evatechnosoft/ha-ops:latest
+            sudo docker pull deancjx/ha-ops:latest
+            sudo docker run -d --name ha-ops-prod -p 4610:8123 -v /DATA/AppData/ha-ops/prod:/config deancjx/ha-ops:latest
