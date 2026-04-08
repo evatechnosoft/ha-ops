@@ -1,0 +1,31 @@
+name: CD Prod (ZimaOS)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Build & Push to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker build -t evatechnosoft/ha-ops:latest .
+          docker push evatechnosoft/ha-ops:latest
+
+      - name: Deploy to ZimaOS (Prod)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ZIMAOS_IP }}
+          username: dean
+          password: ${{ secrets.ZIMAOS_PASSWORD }}
+          script: |
+            sudo docker stop ha-ops-prod || true
+            sudo docker rm ha-ops-prod || true
+            sudo docker pull evatechnosoft/ha-ops:latest
+            sudo docker run -d --name ha-ops-prod -p 4601:8123 -v /DATA/AppData/ha-ops/prod:/config evatechnosoft/ha-ops:latest

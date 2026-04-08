@@ -1,0 +1,51 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.1.186
+    - 127.0.0.1
+    - 172.18.0.0/16
+
+# InfluxDB v2 Integration
+influxdb:
+  api_version: 2
+  ssl: false
+  host: 192.168.1.186
+  port: 8086
+  token: ha-influx-premium-token-2024-v2
+  organization: evatechnosoft
+  bucket: homeassistant
+  include:
+    domains:
+      - sensor
+      - binary_sensor
+      - vacuum
+
+lovelace:
+  mode: yaml
+  resources:
+    - url: /local/community/lovelace-mushroom/mushroom.js
+      type: module
+    - url: /local/community/apexcharts-card/apexcharts-card.js
+      type: module
+    - url: /local/community/lovelace-card-mod/card-mod.js
+      type: module
+    - url: /local/community/Bubble-Card/bubble-card.js
+      type: module
+  dashboards:
+    lovelace-nexus:
+      mode: yaml
+      title: Nexus Dashboard Final
+      icon: mdi:view-dashboard
+      show_in_sidebar: true
+      filename: nexus-dashboard.yaml

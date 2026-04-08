@@ -1,0 +1,46 @@
+title: Mi Temp Dashboard
+views:
+  - title: Mi Temp
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        title: Mi Temp (Hassas Veri)
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.a4c1381790bd_ble_temperature_a4c1381790bd
+            name: Sıcaklık
+            icon: mdi:thermometer
+            icon_color: orange
+          - type: custom:mushroom-entity-card
+            entity: sensor.a4c1381790bd_ble_humidity_a4c1381790bd
+            name: Nem
+            icon: mdi:water-percent
+            icon_color: blue
+          - type: custom:mushroom-entity-card
+            entity: sensor.a4c1381790bd_ble_battery_a4c1381790bd
+            name: Pil
+            icon: mdi:battery
+            icon_color: green
+          - type: custom:mushroom-entity-card
+            entity: sensor.a4c1381790bd_ble_rssi_a4c1381790bd
+            name: Sinyal Gücü (RSSI)
+            icon: mdi:bluetooth
+            icon_color: blue
+      - type: grid
+        title: Geçmiş Grafiği
+        cards:
+          - type: custom:apexcharts-card
+            graph_span: 24h
+            header:
+              show: true
+              title: 24 Saatlik Akış
+            series:
+              - entity: sensor.a4c1381790bd_ble_temperature_a4c1381790bd
+                name: Sıcaklık
+                type: area
+                color: '#ff9800'
+              - entity: sensor.a4c1381790bd_ble_humidity_a4c1381790bd
+                name: Nem
+                type: line
+                color: '#2196f3'

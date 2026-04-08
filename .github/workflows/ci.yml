@@ -1,0 +1,25 @@
+name: CI (Lint & Build)
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Home Assistant Check
+        run: |
+          docker run --rm -v $(pwd):/config ghcr.io/home-assistant/home-assistant:stable python3 -m homeassistant -c /config --script check_config
+
+  build-esphome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ESPHome Build Check
+        run: |
+          pip install esphome
+          esphome compile smart-station.yaml
